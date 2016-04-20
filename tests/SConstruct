@@ -1,0 +1,55 @@
+env = Environment()
+Export("env")
+
+objs = []
+
+env["CC"] = "gcc"
+env["LD"] = "gcc"
+
+# Add c-semver library
+env.Append(CPPPATH = [Dir("../include")])
+objs.append(env.Object(source = [File(Glob("../src/*.c"))]))
+
+# Add test sources
+objs.append(env.Object(source = [File(Glob("*.c"))]))
+
+env.Append(LINKFLAGS = [
+	env["CFLAGS"]
+])
+
+env.Append(CFLAGS = [
+	"-Os",
+	"-g",
+	"-flto",
+	"-fno-common",
+	"-ffunction-sections",
+	"-fdata-sections",
+	"--std=c99",
+	"-Wall",
+	"-Wextra",
+	"-pedantic",
+	"-Werror",
+	"-Winit-self",
+	"-Wreturn-local-addr",
+	"-Wswitch-default",
+	"-Wuninitialized",
+	"-Wundef",
+	"-Wstack-usage=256",
+	"-Wshadow",
+	"-Wimplicit-function-declaration",
+	"-Wcast-qual",
+	"-Wwrite-strings",
+	"-Wconversion",
+	"-Wlogical-op",
+	"-Wmissing-declarations",
+	"-Wno-missing-field-initializers",
+	"-Wstack-protector",
+	"-Wredundant-decls",
+	"-Wmissing-prototypes",
+	"-Wstrict-prototypes",
+])
+
+test = env.Program(source = objs, target = "test")
+
+Default(test)
+
